@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -34,13 +35,14 @@
         .id-input { background: #0f172a; border: 1px solid var(--border); padding: 12px; color: white; border-radius: 6px; outline: none; text-align: center; }
         .id-input:focus { border-color: var(--accent); }
 
-        .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+        .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
         .tab-btn { padding: 12px 5px; background: var(--card-bg); border: 1px solid var(--border); color: #64748b; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.7rem; text-transform: uppercase; transition: 0.3s; }
         
         .tab-btn.active-buy { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
         .tab-btn.active-sell { border-color: var(--sell-accent); color: var(--sell-accent); }
         .tab-btn.active-collect { border-color: var(--collect-accent); color: var(--collect-accent); }
         .tab-btn.active-drug { border-color: var(--drug-accent); color: var(--drug-accent); }
+        .tab-btn.active-misc { border-color: #f59e0b; color: #f59e0b; }
 
         .search-bar { width: 100%; padding: 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: white; margin-bottom: 15px; box-sizing: border-box; outline: none; }
 
@@ -94,7 +96,7 @@
 <body>
 
 <div id="loader">
-    <div class="loader-title">DIRTY HEROS bm store </div>
+    <div class="loader-title">DIRTY HEROS</div>
     <div class="progress-bar"><div class="progress-fill"></div></div>
 </div>
 
@@ -112,6 +114,7 @@
         <button class="tab-btn" id="btn-sell" onclick="showTab('sell')">WEAPONS</button>
         <button class="tab-btn" id="btn-collect" onclick="showTab('collect')">COLLECTABLES</button>
         <button class="tab-btn" id="btn-drug" onclick="showTab('drug')">NARCOTICS</button>
+        <button class="tab-btn" id="btn-misc" onclick="showTab('misc')">MISC</button>
     </div>
 
     <input type="text" class="search-bar" id="mainSearch" placeholder="SEARCH CURRENT TAB..." onkeyup="filterTable()">
@@ -127,6 +130,9 @@
     </div>
     <div id="drug-tab" class="content-section">
         <div class="table-container"><table><thead><tr><th>PRODUCT</th><th>PRICE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="drugBody"></tbody></table></div>
+    </div>
+    <div id="misc-tab" class="content-section">
+        <div class="table-container"><table><thead><tr><th>ITEM</th><th>VALUE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="miscBody"></tbody></table></div>
     </div>
 </div>
 
@@ -171,15 +177,17 @@
             ["KAC", 12000], ["MAR 10", 12000], ["Rem Model 700", 12000], ["RSASS", 12000]
         ],
         collect: [
-            ["found bitcoin",20000], ["phone",7000], ["GPU",10000], 
-            ["ssd",10000], ["mined bitcoin",40000]
+            ["found bitcoin", 20000], ["Gold Bar", 50000], ["GPU", 35000], 
+            ["phone", 7000], ["Ancient Coin", 15000]
         ],
         drug: [
-            ["Cocaine (Brick)",35000], ["Meth (Bag)", 65000], 
+            ["Cocaine (Brick)", 35000], ["Meth (Bag)", 65000], 
             ["LSD (Tabs)", 25000], ["Weed (Ounce)", 15000]
         ],
-
+        
+        
     };
+
 
     let selections = {}; 
     let currentMode = 'buy';
@@ -249,7 +257,7 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
         document.getElementById('btn-' + m).classList.add('active-' + m);
         
-        const colors = { buy: '#38bdf8', sell: '#10b981', collect: '#a855f7', drug: '#fbbf24' };
+        const colors = { buy: '#38bdf8', sell: '#10b981', collect: '#a855f7', drug: '#fbbf24', misc: '#f59e0b' };
         document.getElementById('mainFooter').style.borderTopColor = colors[m];
         document.getElementById('submitBtn').style.backgroundColor = colors[m];
         currentMode = m;
