@@ -1,3 +1,239 @@
+Deathmonster92
+deathmonster92
+Invisible
+
+Ghost — 08/03/2026 18:35
+https://discord.gg/nFUCQc5h
+Ghost — 14/03/2026 19:24
+https://discord.gg/jkfWzkyr
+Scavs
+Scavs
+5 Online
+8 Members
+Est. Feb 2026
+
+Go to Server
+Ghost — 14/03/2026 20:13
+ama hit the sack as im fucked mate have a good night bud ill see if i can make one of these tools for you at some point
+Deathmonster92 [TF],  — 14/03/2026 20:57
+thanks buddy
+Ghost — 14/03/2026 22:20
+you still about?
+Deathmonster92 [TF],  — 14/03/2026 22:20
+i am
+Ghost — 14/03/2026 22:20
+wana show you something
+Deathmonster92 [TF],  — 14/03/2026 22:20
+what dc
+Ghost
+ started a call that lasted 15 minutes. — 14/03/2026 22:20
+Deathmonster92 [TF],  — 17/03/2026 13:06
+/**
+ 
+Automatically calculates Total when Quantity is updated.*/
+function onEdit(e) {
+  const sheet = e.source.getActiveSheet();
+  const range = e.range;
+
+  // Settings: Adjust these to match your columns
+  const qtyColumn = 3;    // Column C
+  const priceColumn = 2;  // Column B
+  const totalColumn = 4;  // Column D
+  const startRow = 2;     // Skip the header row
+
+  // Only run if the edit happened in the Quantity column and below the header
+  if (range.getColumn() === qtyColumn && range.getRow() >= startRow) {
+    const row = range.getRow();
+
+    // Get the Price and the New Quantity
+    const price = sheet.getRange(row, priceColumn).getValue();
+    const qty = range.getValue();
+
+    // Calculate and set the total
+    const total = price * qty;
+
+    // If the input is a number, update the total column
+    if (!isNaN(total)) {
+      sheet.getRange(row, totalColumn).setValue(total);
+    } else {
+      sheet.getRange(row, totalColumn).setValue(0);
+    }
+  }
+}
+Is that what i have to write in apps script for it to work and im quessing more
+Ghost — 17/03/2026 13:37
+Where you got that from?
+Deathmonster92 [TF],  — 17/03/2026 13:37
+Gemini lol
+Asking ai to write for me
+Deathmonster92 [TF],  — 17/03/2026 19:58
+u on 
+Deathmonster92 [TF],  — 17/03/2026 20:13
+want to show u sumthing
+Ghost
+ started a call that lasted 14 minutes. — 17/03/2026 20:16
+Deathmonster92 [TF],  — 17/03/2026 20:25
+const DISCORD_WEBHOOK = "https://discordapp.com/api/webhooks/1483557471292362893/pC3F3WudoNOO0WWAVfPAlVM_cJi_79mtER4icgaT5t0XI1WfDRNiJhb6jAI0XWJ84E6C";
+
+// Sheets that should trigger the system
+const TARGET_SHEETS = ["CustomerOrders", "PlayerPurchases"];
+
+function onEdit(e) {
+  const sheet = e.source.getActiveSheet();
+  const sheetName = sheet.getName();
+
+  // Only run on the two target sheets
+  if (!TARGET_SHEETS.includes(sheetName)) return;
+
+  const row = e.range.getRow();
+  const col = e.range.getColumn();
+
+  // Only run when Quantity column (C) is edited
+  if (col === 3 && row > 1) {
+    const orderNumberCell = sheet.getRange(row, 1);
+    const itemCell = sheet.getRange(row, 2);
+    const quantityCell = sheet.getRange(row, 3);
+    const priceCell = sheet.getRange(row, 4);
+    const totalCell = sheet.getRange(row, 5);
+
+    const item = itemCell.getValue();
+    const quantity = quantityCell.getValue();
+    const price = priceCell.getValue();
+
+    if (!quantity || !price) return;
+
+    // Generate order number if missing
+    if (!orderNumberCell.getValue()) {
+      const orderNumber = sheetName.substring(0, 3).toUpperCase() + "-" + new Date().getTime();
+      orderNumberCell.setValue(orderNumber);
+    }
+
+    const total = quantity * price;
+    totalCell.setValue(total);
+
+    // Send Discord notification
+    sendDiscordNotification(
+      sheetName,
+      orderNumberCell.getValue(),
+      item,
+      quantity,
+      price,
+      total
+    );
+  }
+}
+
+function sendDiscordNotification(sheetName, orderNumber, item, quantity, price, total) {
+  const payload = {
+    content: 📦 **New Order Recorded in ${sheetName}**
+**Order Number:** ${orderNumber}
+**Item:** ${item}
+**Quantity:** ${quantity}
+**Price Each:** £${price}
+**Total:** £${total}
+  };
+
+  const params = {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload)
+  };
+
+  UrlFetchApp.fetch(DISCORD_WEBHOOK, params);
+}
+https://docs.google.com/spreadsheets/d/1PpqB5p4WwBd09zNQwSUpKfQSa8jQQejS05C37terbuw/edit?usp=sharing
+Google Docs
+DH BM guns pricelist
+Image
+https://discordapp.com/api/webhooks/1483557471292362893/pC3F3WudoNOO0WWAVfPAlVM_cJi_79mtER4icgaT5t0XI1WfDRNiJhb6jAI0XWJ84E6C
+Ghost — 17/03/2026 20:43
+https://code.visualstudio.com/
+Visual Studio Code - The open source AI code editor
+Visual Studio Code redefines AI-powered coding with GitHub Copilot for building and debugging modern web and cloud applications. Visual Studio Code is free and available on your favorite platform - Linux, macOS, and Windows.
+Visual Studio Code - The open source AI code editor
+Deathmonster92
+ started a call that lasted a few seconds. — 11:35
+Deathmonster92 [TF],  — 11:37
+U on later
+Deathmonster92 [TF],  — 12:43
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirty Heros Blackmarket | Unified Trade</title>
+
+VCE-2026-03-19-12-42-52.html
+18 KB
+Ghost — 12:50
+Looks alright bud
+Deathmonster92 [TF],  — 12:51
+Can u see the code for it
+Ghost — 12:53
+Aye
+Have you tested it?
+Deathmonster92
+ started a call that lasted a few seconds. — 12:53
+Ghost — 12:54
+Can’t talk atm bud at work
+Deathmonster92 [TF],  — 12:54
+Yhyh no worries
+Gonna test when i get home
+As at work myself lol
+Deathmonster92 [TF],  — 20:01
+u on
+Deathmonster92 [TF],  — 20:19
+need to show u summet
+Ghost — 21:10
+Did the code work?
+Deathmonster92 [TF],  — 21:10
+jump in robs dc 
+Ghost — 21:10
+Not at pc atm 😂
+Deathmonster92 [TF],  — 21:11
+lol got it working but trying to add collectables and drugs to it
+https://rawlinschris150-ui.github.io/dirty-heros-blackmarket/
+Ghost — 22:25
+page is up and looks good man
+Deathmonster92 [TF],  — 22:51
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirty Heros Blackmarket | Unified Trade</title>
+
+code1.html
+19 KB
+Ghost — 22:53
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirty Heros Blackmarket | Unified Trade</title>
+
+message.txt
+23 KB
+Deathmonster92 [TF],  — 23:06
+https://discordapp.com/api/webhooks/1483557471292362893/pC3F3WudoNOO0WWAVfPAlVM_cJi_79mtER4icgaT5t0XI1WfDRNiJhb6jAI0XWJ84E6C
+Ghost — 23:13
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirty Heros Blackmarket | Unified Trade</title>
+
+message.txt
+23 KB
+https://discordapp.com/api/webhooks/1483557471292362893/pC3F3WudoNOO0WWAVfPAlVM_cJi_79mtER4icgaT5t0XI1WfDRNiJhb6jAI0XWJ84E6C
+Ghost
+ghostyboi117
+ 
+ 
+ 
+:0_::1_::2_::3_::4_::5_::6_:
 <!DOCTYPE html>
 <html lang="en">
 <head>
