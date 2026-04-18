@@ -86,6 +86,7 @@
         .total-value { font-size: 1.8rem; font-weight: bold; color: #fff; font-family: monospace; }
         .btn-submit { background: var(--accent); color: #000; border: none; padding: 15px 35px; border-radius: 6px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
         .content-section { display: none; }
         .content-section.active { display: block; }
@@ -408,6 +409,11 @@
     }
 
     async function confirmAndSend() {
+        if (!storeOpen) {
+            alert("THE STORE IS CURRENTLY CLOSED. ORDERS CANNOT BE PLACED.");
+            return;
+        }
+        
         const pName = document.getElementById('playerName').value || "N/A";
         const sName = document.getElementById('serverName').value || "N/A";
         
@@ -472,16 +478,19 @@
         const storeClosedEl = document.getElementById('storeClosed');
         const footer = document.getElementById('mainFooter');
         const toggleBtn = document.getElementById('storeToggle');
+        const submitBtn = document.getElementById('submitBtn');
         
         if (storeOpen) {
             storeOpenEl.style.display = 'block';
             storeClosedEl.style.display = 'none';
             footer.style.display = 'flex';
+            if (submitBtn) submitBtn.disabled = false;
             toggleBtn.innerText = 'CLOSE STORE';
         } else {
             storeOpenEl.style.display = 'none';
             storeClosedEl.style.display = 'block';
             footer.style.display = 'none';
+            if (submitBtn) submitBtn.disabled = true;
             toggleBtn.innerText = 'OPEN STORE';
         }
     }
