@@ -19,6 +19,379 @@
 
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000 url('loader-bg.jpg') center/cover no-repeat;
+            background-blend-mode: multiply;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .loader-title { font-size: 2.5rem; font-weight: 900; color: var(--danger); text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 20px rgba(0,0,0,0.7); }
+        .progress-bar { width: 250px; height: 2px; background: #222; margin-top: 20px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: var(--danger); animation: load 1.5s forwards linear; }
+        @keyframes load { 0% { width: 0%; } 100% { width: 100%; } }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 160px; overflow-x: hidden; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .identity-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .id-input { background: #0f172a; border: 1px solid var(--border); padding: 12px; color: white; border-radius: 6px; outline: none; text-align: center; }
+        .id-input:focus { border-color: var(--accent); }
+
+        .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 5px; background: var(--card-bg); border: 1px solid var(--border); color: #64748b; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.7rem; text-transform: uppercase; transition: 0.3s; }
+        
+        .tab-btn.active-buy { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .tab-btn.active-sell { border-color: var(--sell-accent); color: var(--sell-accent); }
+        .tab-btn.active-collect { border-color: var(--collect-accent); color: var(--collect-accent); }
+        .tab-btn.active-drug { border-color: var(--drug-accent); color: var(--drug-accent); }
+        .tab-btn.active-misc { border-color: #f59e0b; color: #f59e0b; }
+
+        .search-bar { width: 100%; padding: 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: white; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+
+        .table-container { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #0f172a; padding: 12px; color: #64748b; text-align: left; font-size: 0.7rem; }
+        td { padding: 12px 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        
+        .qty-controls { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+        .qty-btn { background: #1e293b; border: 1px solid var(--border); color: white; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .qty-btn:hover { background: #334155; }
+        .qty-val { width: 30px; text-align: center; font-weight: bold; color: #fff; font-family: monospace; }
+
+        .item-row.has-qty { background: rgba(56, 189, 248, 0.05); }
+
+        .calc-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #111827; border-top: 3px solid var(--accent);
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.8); z-index: 1000;
+        }
+        .total-value { font-size: 1.8rem; font-weight: bold; color: #fff; font-family: monospace; }
+        .btn-submit { background: var(--accent); color: #000; border: none; padding: 15px 35px; border-radius: 6px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* Modal Styles */
+        #reviewModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: var(--card-bg); width: 90%; max-width: 500px; border: 1px solid var(--accent);
+            border-radius: 12px; padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        #modalContent {
+            max-height: 350px; overflow-y: auto; margin: 20px 0; border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border); padding: 15px 0; font-family: monospace;
+        }
+        .modal-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+
+        @media (max-width: 600px) {
+            .tabs { grid-template-columns: 1fr 1fr; }
+            .calc-footer { flex-direction: column; gap: 15px; text-align: center; padding: 15px; }
+            .identity-bar { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loader">
+    <div class="loader-title">DIRTY HEROS</div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+</div>
+
+<div class="container">
+    <header>
+        <div style="color: var(--danger); font-weight: 900; letter-spacing: 2px; font-size: 1.2rem;">DIRTY HEROS ENTERPRISE</div>
+        <div class="identity-bar">
+            <input type="text" id="playerName" class="id-input" placeholder="PLAYER NAME" oninput="saveIdentity()">
+            <input type="text" id="serverName" class="id-input" placeholder="SERVER NAME" oninput="saveIdentity()">
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active-buy" id="btn-buy" onclick="showTab('buy')">BUY STOCK</button>
+        <button class="tab-btn" id="btn-sell" onclick="showTab('sell')">WEAPONS</button>
+        <button class="tab-btn" id="btn-collect" onclick="showTab('collect')">COLLECTABLES</button>
+        <button class="tab-btn" id="btn-drug" onclick="showTab('drug')">NARCOTICS</button>
+        <button class="tab-btn" id="btn-misc" onclick="showTab('misc')">MISC</button>
+    </div>
+
+    <input type="text" class="search-bar" id="mainSearch" placeholder="SEARCH CURRENT TAB..." onkeyup="filterTable()">
+
+    <div id="buy-tab" class="content-section active">
+        <div class="table-container"><table><thead><tr><th>ITEM</th><th>PRICE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="buyBody"></tbody></table></div>
+    </div>
+    <div id="sell-tab" class="content-section">
+        <div class="table-container"><table><thead><tr><th>WEAPON</th><th>BASE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="sellBody"></tbody></table></div>
+    </div>
+    <div id="collect-tab" class="content-section">
+        <div class="table-container"><table><thead><tr><th>COLLECTABLE</th><th>VALUE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="collectBody"></tbody></table></div>
+    </div>
+    <div id="drug-tab" class="content-section">
+        <div class="table-container"><table><thead><tr><th>PRODUCT</th><th>PRICE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="drugBody"></tbody></table></div>
+    </div>
+    <div id="misc-tab" class="content-section">
+        <div class="table-container"><table><thead><tr><th>ITEM</th><th>VALUE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="miscBody"></tbody></table></div>
+    </div>
+</div>
+
+<div class="calc-footer" id="mainFooter">
+    <div style="display: flex; gap: 40px;">
+        <div><span style="font-size: 0.7rem; color: #64748b;">TOTAL ITEMS</span><br><span id="count" style="font-size: 1.5rem; font-weight: bold;">0</span></div>
+        <div><span style="font-size: 0.7rem; color: #64748b;">GRAND TOTAL</span><br><span id="total" class="total-value">$0</span></div>
+    </div>
+    <button class="btn-submit" id="submitBtn" onclick="toggleModal(true)">REVIEW & TRANSMIT</button>
+</div>
+
+<div id="reviewModal">
+    <div class="modal-box">
+        <h2 style="color:var(--accent); margin:0; font-size: 1.2rem; text-transform:uppercase;">Confirm Manifest</h2>
+        <div id="modalContent"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button onclick="toggleModal(false)" style="background:#334155; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer; font-weight:bold;">BACK</button>
+            <button onclick="confirmAndSend()" style="background:var(--sell-accent); color:black; border:none; padding:12px; border-radius:6px; cursor:pointer; font-weight:bold;">CONFIRM</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURATION ---
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1483557471292362893/pC3F3WudoNOO0WWAVfPAlVM_cJi_79mtER4icgaT5t0XI1WfDRNiJhb6jAI0XWJ84E6C"; 
+
+    const masterData = {
+        buy: [
+            ["AS50 (+ 5 Mags 10 stacks)", 450000], ["PKP (+ 4 Mags)", 400000], ["TF AA12 (Stack)", 60000],
+            ["PKP Mags (Each)", 45000], ["100rd Scar-H Mags", 40000], ["TF .50 (Stack)", 40000],
+            ["TF Badger Ammo", 25000], ["AS Mags (Each)", 20000], [".50 BMG (Stack)", 10000]
+        ],
+        sell: [
+            ["PKP", 80000], ["Alligator", 80000], ["AS50", 80000], ["Barrett M82A1", 80000], 
+            ["Barrett GNGC", 65000], ["AX50", 55000], ["M249", 50000], ["VSSK", 50000], 
+            ["ASh-12.7", 50000], ["Lynx", 50000], ["Kivaari", 35000], ["M96", 30000], ["beowolf",30000],["m60",30000],
+            ["Cheytac M200", 25000], ["Cheytac M300", 25000], ["F&D Defense", 25000], 
+            ["Gewehr 43", 25000], ["Gewehr MK-3", 25000], ["SRS A3", 25000], 
+            ["AWM", 20000], ["AWM 338", 20000], ["DKMC T5000", 20000], ["DVL 10", 20000], 
+            ["M24A3", 20000], ["M98B", 20000], ["Tac 21", 20000], ["Scar-H", 12000], 
+            ["Deagle (Gold)", 12000], ["AAC Honey Badger", 12000], ["Barrett MRAD", 12000], 
+            ["KAC", 12000], ["MAR 10", 12000], ["Rem Model 700", 12000], ["RSASS", 12000],
+        ],
+        collect: [
+            ["found bitcoin", 25000], ["floppy disc", 13000], ["gameboy cartridge", 13000], 
+            ["intel folder", 13000], ["GPU", 13000], ["phone", 10000],["tetris toy", 13000],
+            ["hockey cards", 10000],["pocket watch", 13000], ["ram", 13000], ["retro memory card", 13000],
+            ["retro toy", 13000], ["mined bitcoin", 45000]
+        ],
+        drug: [
+            ["Cocaine (Brick)", 65000], ["blackfrost (brick)", 30000], ["stardawg", 30000],["future", 30000],
+            ["blue god", 30000], ["skunk", 30000], ["s1 brick", 30000], ["nomad", 30000], ["purple kush", 30000]
+        ],
+        misc: [
+             ["red flare ", 100000], ["yellow flare", 300000],
+             ["black flare", 200000], ["blue flare", 500000], ["mili keys", 75000]
+            , ["usd", 30000], 
+        ]
+    
+    };
+    let selections = {};
+    let currentMode = 'buy';
+
+    // --- INITIALIZATION ---
+    window.addEventListener('load', () => {
+        setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
+        loadIdentity();
+        initTables();
+    });
+
+    function initTables() {
+        Object.keys(masterData).forEach(key => {
+            const body = document.getElementById(key + 'Body');
+            masterData[key].forEach(item => {
+                let tr = document.createElement('tr');
+                tr.className = 'item-row';
+                const safeName = item[0].replace(/'/g, "\\'");
+                tr.innerHTML = `
+                    <td>${item[0]}</td>
+                    <td class="price">$${item[1].toLocaleString()}</td>
+                    <td class="qty-controls">
+                        <button class="qty-btn" onclick="changeQty('${safeName}', -1, this)">-</button>
+                        <span class="qty-val" id="qty-${item[0]}">0</span>
+                        <button class="qty-btn" onclick="changeQty('${safeName}', 1, this)">+</button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        });
+    }
+
+    // --- LOGIC ---
+    function changeQty(name, delta, btn) {
+        if(!selections[name]) selections[name] = 0;
+        selections[name] = Math.max(0, selections[name] + delta);
+        
+        document.getElementById('qty-' + name).innerText = selections[name];
+        
+        const row = btn.closest('tr');
+        if(selections[name] > 0) row.classList.add('has-qty');
+        else row.classList.remove('has-qty');
+
+        calculateGlobal();
+    }
+
+    function calculateGlobal() {
+        let totalVal = 0;
+        let totalCount = 0;
+        
+        // Scan ALL data to fix the "Persistent" bug
+        Object.values(masterData).flat().forEach(item => {
+            let q = selections[item[0]] || 0;
+            if(q > 0) {
+                totalVal += item[1] * q;
+                totalCount += q;
+            }
+        });
+
+        document.getElementById('count').innerText = totalCount;
+        document.getElementById('total').innerText = '$' + totalVal.toLocaleString();
+    }
+
+    function showTab(m) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(m + '-tab').classList.add('active');
+        document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
+        document.getElementById('btn-' + m).classList.add('active-' + m);
+        
+        const colors = { buy: '#38bdf8', sell: '#10b981', collect: '#a855f7', drug: '#fbbf24', misc: '#f59e0b' };
+        document.getElementById('mainFooter').style.borderTopColor = colors[m];
+        document.getElementById('submitBtn').style.backgroundColor = colors[m];
+        currentMode = m;
+    }
+
+    function filterTable() {
+        let q = document.getElementById('mainSearch').value.toUpperCase();
+        document.querySelectorAll('.content-section.active tr.item-row').forEach(r => {
+            r.style.display = r.innerText.toUpperCase().includes(q) ? "" : "none";
+        });
+    }
+
+    // --- MODAL & DISCORD ---
+    function toggleModal(show) {
+        const modal = document.getElementById('reviewModal');
+        const content = document.getElementById('modalContent');
+        
+        if (show) {
+            let summary = "";
+            let hasItems = false;
+
+            for (const [category, items] of Object.entries(masterData)) {
+                let catHtml = "";
+                items.forEach(item => {
+                    const q = selections[item[0]] || 0;
+                    if (q > 0) {
+                        catHtml += `<div class="modal-row">
+                            <span>${item[0]} (x${q})</span>
+                            <span style="color:var(--accent)">$${(item[1] * q).toLocaleString()}</span>
+                        </div>`;
+                        hasItems = true;
+                    }
+                });
+                if (catHtml) {
+                    summary += `<div style="color:#64748b; font-size:0.7rem; margin-top:15px; border-bottom:1px solid #1e293b; padding-bottom:3px; margin-bottom:8px;">${category.toUpperCase()}</div>` + catHtml;
+                }
+            }
+
+            if (!hasItems) return alert("YOUR MANIFEST IS EMPTY");
+            
+            content.innerHTML = summary + `<div style="margin-top:20px; text-align:right; font-weight:bold; font-size:1.2rem; border-top: 1px dashed #334155; padding-top:10px;">TOTAL: ${document.getElementById('total').innerText}</div>`;
+            modal.style.display = 'flex';
+        } else {
+            modal.style.display = 'none';
+        }
+    }
+
+    async function confirmAndSend() {
+        const pName = document.getElementById('playerName').value || "N/A";
+        const sName = document.getElementById('serverName').value || "N/A";
+        
+        let manifestLines = [];
+        for (const [category, items] of Object.entries(masterData)) {
+            let catGroup = [];
+            items.forEach(item => {
+                const q = selections[item[0]] || 0;
+                if (q > 0) catGroup.push(`[${q}x] ${item[0]}`);
+            });
+            if(catGroup.length > 0) {
+                manifestLines.push(`--- ${category.toUpperCase()} ---`);
+                manifestLines.push(...catGroup);
+                manifestLines.push(""); // Spacer
+            }
+        }
+
+        const payload = {
+            username: "DH DISPATCH",
+            embeds: [{
+                title: "📦 NEW BLACKMARKET ORDER",
+                color: 15548997,
+                fields: [
+                    { name: "OPERATOR", value: `\`${pName}\``, inline: true },
+                    { name: "SERVER", value: `\`${sName}\``, inline: true },
+                    { name: "GRAND TOTAL", value: `**${document.getElementById('total').innerText}**`, inline: false },
+                    { name: "MANIFEST", value: "```ml\n" + manifestLines.join("\n") + "\n```" }
+                ],
+                footer: { text: "Dirty Heros Enterprise • Automated Logistics" },
+                timestamp: new Date().toISOString()
+            }]
+        };
+
+        try {
+            const res = await fetch(DISCORD_WEBHOOK_URL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(payload) 
+            });
+            if(res.ok) {
+                alert("TRANSMISSION SUCCESSFUL");
+                location.reload();
+            } else { alert("WEBHOOK ERROR"); }
+        } catch (e) { alert("NETWORK FAIL"); }
+    }
+
+    // --- LOCAL STORAGE ---
+    function saveIdentity() {
+        localStorage.setItem('dh_player', document.getElementById('playerName').value);
+        localStorage.setItem('dh_server', document.getElementById('serverName').value);
+    }
+
+    function loadIdentity() {
+        if(localStorage.getItem('dh_player')) document.getElementById('playerName').value = localStorage.getItem('dh_player');
+        if(localStorage.getItem('dh_server')) document.getElementById('serverName').value = localStorage.getItem('dh_server');
+    }
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirty Heros Blackmarket | Unified Trade</title>
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --card-bg: #161b29;
+            --text: #e2e8f0;
+            --accent: #38bdf8;
+            --sell-accent: #10b981;
+            --collect-accent: #a855f7;
+            --drug-accent: #fbbf24;
+            --border: #1e293b;
+            --danger: #ef4444;
+        }
+
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
         }
