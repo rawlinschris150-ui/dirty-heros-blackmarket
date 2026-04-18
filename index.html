@@ -142,6 +142,13 @@
     </div>
 
     <div id="storeOpen">
+    <div class="tabs">
+        <button class="tab-btn active-buy" id="btn-buy" onclick="showTab('buy')">BUY STOCK</button>
+        <button class="tab-btn" id="btn-sell" onclick="showTab('sell')">WEAPONS</button>
+        <button class="tab-btn" id="btn-collect" onclick="showTab('collect')">COLLECTABLES</button>
+        <button class="tab-btn" id="btn-drug" onclick="showTab('drug')">NARCOTICS</button>
+        <button class="tab-btn" id="btn-misc" onclick="showTab('misc')">MISC</button>
+    </div>
 
     <input type="text" class="search-bar" id="mainSearch" placeholder="SEARCH CURRENT TAB..." onkeyup="filterTable()">
 
