@@ -90,6 +90,11 @@
         .content-section { display: none; }
         .content-section.active { display: block; }
 
+        .store-closed {
+            text-align: center; padding: 50px; color: var(--text);
+            font-size: 1.5rem; font-weight: bold;
+        }
+
         /* Modal Styles */
         #reviewModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -126,15 +131,17 @@
             <input type="text" id="playerName" class="id-input" placeholder="PLAYER NAME" oninput="saveIdentity()">
             <input type="text" id="serverName" class="id-input" placeholder="SERVER NAME" oninput="saveIdentity()">
         </div>
+        <div style="margin-top: 15px;">
+            <button id="storeToggle" onclick="toggleStore()" style="background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">CLOSE STORE</button>
+        </div>
     </header>
 
-    <div class="tabs">
-        <button class="tab-btn active-buy" id="btn-buy" onclick="showTab('buy')">BUY STOCK</button>
-        <button class="tab-btn" id="btn-sell" onclick="showTab('sell')">WEAPONS</button>
-        <button class="tab-btn" id="btn-collect" onclick="showTab('collect')">COLLECTABLES</button>
-        <button class="tab-btn" id="btn-drug" onclick="showTab('drug')">NARCOTICS</button>
-        <button class="tab-btn" id="btn-misc" onclick="showTab('misc')">MISC</button>
+    <div id="storeClosed" class="store-closed" style="display: none;">
+        <div style="color: var(--danger); font-size: 2rem; margin-bottom: 20px;">STORE CLOSED</div>
+        <div>The blackmarket is currently unavailable. Please check back later.</div>
     </div>
+
+    <div id="storeOpen">
 
     <input type="text" class="search-bar" id="mainSearch" placeholder="SEARCH CURRENT TAB..." onkeyup="filterTable()">
 
@@ -152,6 +159,7 @@
     </div>
     <div id="misc-tab" class="content-section">
         <div class="table-container"><table><thead><tr><th>ITEM</th><th>VALUE</th><th style="text-align:right">QTY</th></tr></thead><tbody id="miscBody"></tbody></table></div>
+    </div>
     </div>
 </div>
 
@@ -214,6 +222,7 @@
     };
     let selections = {};
     let currentMode = 'buy';
+    let storeOpen = true;
 
     // --- INITIALIZATION ---
     window.addEventListener('load', () => {
@@ -384,6 +393,33 @@
     function loadIdentity() {
         if(localStorage.getItem('dh_player')) document.getElementById('playerName').value = localStorage.getItem('dh_player');
         if(localStorage.getItem('dh_server')) document.getElementById('serverName').value = localStorage.getItem('dh_server');
+        storeOpen = localStorage.getItem('dh_store_open') !== 'false';
+        updateStoreDisplay();
+    }
+
+    function toggleStore() {
+        storeOpen = !storeOpen;
+        localStorage.setItem('dh_store_open', storeOpen);
+        updateStoreDisplay();
+    }
+
+    function updateStoreDisplay() {
+        const storeOpenEl = document.getElementById('storeOpen');
+        const storeClosedEl = document.getElementById('storeClosed');
+        const footer = document.getElementById('mainFooter');
+        const toggleBtn = document.getElementById('storeToggle');
+        
+        if (storeOpen) {
+            storeOpenEl.style.display = 'block';
+            storeClosedEl.style.display = 'none';
+            footer.style.display = 'flex';
+            toggleBtn.innerText = 'CLOSE STORE';
+        } else {
+            storeOpenEl.style.display = 'none';
+            storeClosedEl.style.display = 'block';
+            footer.style.display = 'none';
+            toggleBtn.innerText = 'OPEN STORE';
+        }
     }
 </script>
 </body>
