@@ -131,8 +131,10 @@
             <input type="text" id="playerName" class="id-input" placeholder="PLAYER NAME" oninput="saveIdentity()">
             <input type="text" id="serverName" class="id-input" placeholder="SERVER NAME" oninput="saveIdentity()">
         </div>
-        <div style="margin-top: 15px;">
-            <button id="storeToggle" onclick="toggleStore()" style="background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">CLOSE STORE</button>
+        <div style="margin-top: 15px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;">
+            <input type="password" id="ownerPassword" class="id-input" placeholder="STORE PASSWORD" style="max-width:240px; flex:1 1 240px;">
+            <button id="ownerLoginBtn" onclick="authenticateOwner()" style="background:#10b981; color:#000; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer;">OWNER LOGIN</button>
+            <button id="storeToggle" onclick="toggleStore()" disabled style="background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; opacity:0.5;">CLOSE STORE</button>
         </div>
     </header>
 
@@ -230,13 +232,61 @@
     let selections = {};
     let currentMode = 'buy';
     let storeOpen = true;
+    const STORE_PASSWORD = "Leahlouise1"; // change this value to your own secret passcode
+    let ownerAuthenticated = false;
 
     // --- INITIALIZATION ---
     window.addEventListener('load', () => {
         setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
         loadIdentity();
+        loadOwnerAuth();
         initTables();
     });
+
+    function loadOwnerAuth() {
+        ownerAuthenticated = localStorage.getItem('dh_owner_authed') === 'true';
+        updateStoreControl();
+    }
+
+    function authenticateOwner() {
+        const passwordEl = document.getElementById('ownerPassword');
+        let password = passwordEl.value.trim();
+        if (!password) password = prompt("ENTER STORE OWNER PASSWORD") || "";
+        passwordEl.value = "";
+
+        if (password === STORE_PASSWORD) {
+            ownerAuthenticated = true;
+            localStorage.setItem('dh_owner_authed', 'true');
+            alert("OWNER ACCESS GRANTED");
+        } else {
+            ownerAuthenticated = false;
+            localStorage.setItem('dh_owner_authed', 'false');
+            alert("ACCESS DENIED");
+        }
+
+        updateStoreControl();
+    }
+
+    function updateStoreControl() {
+        const toggleBtn = document.getElementById('storeToggle');
+        const loginBtn = document.getElementById('ownerLoginBtn');
+        if (!toggleBtn || !loginBtn) return;
+
+        toggleBtn.disabled = !ownerAuthenticated;
+        toggleBtn.style.opacity = ownerAuthenticated ? '1' : '0.5';
+        loginBtn.innerText = ownerAuthenticated ? 'OWNER UNLOCKED' : 'OWNER LOGIN';
+    }
+
+    function toggleStore() {
+        if (!ownerAuthenticated) {
+            alert("YOU MUST AUTHENTICATE AS OWNER BEFORE CHANGING STORE STATUS");
+            return;
+        }
+
+        storeOpen = !storeOpen;
+        localStorage.setItem('dh_store_open', storeOpen);
+        updateStoreDisplay();
+    }
 
     function initTables() {
         Object.keys(masterData).forEach(key => {
@@ -401,12 +451,6 @@
         if(localStorage.getItem('dh_player')) document.getElementById('playerName').value = localStorage.getItem('dh_player');
         if(localStorage.getItem('dh_server')) document.getElementById('serverName').value = localStorage.getItem('dh_server');
         storeOpen = localStorage.getItem('dh_store_open') !== 'false';
-        updateStoreDisplay();
-    }
-
-    function toggleStore() {
-        storeOpen = !storeOpen;
-        localStorage.setItem('dh_store_open', storeOpen);
         updateStoreDisplay();
     }
 
