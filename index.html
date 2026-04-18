@@ -320,6 +320,11 @@
 
     // --- LOGIC ---
     function changeQty(name, delta, btn) {
+        if (!storeOpen) {
+            alert("THE STORE IS CURRENTLY CLOSED. YOU CANNOT MODIFY YOUR ORDER.");
+            return;
+        }
+        
         if(!selections[name]) selections[name] = 0;
         selections[name] = Math.max(0, selections[name] + delta);
         
@@ -478,21 +483,34 @@
         const storeClosedEl = document.getElementById('storeClosed');
         const footer = document.getElementById('mainFooter');
         const toggleBtn = document.getElementById('storeToggle');
-        const submitBtn = document.getElementById('submitBtn');
         
         if (storeOpen) {
             storeOpenEl.style.display = 'block';
             storeClosedEl.style.display = 'none';
-            footer.style.display = 'flex';
-            if (submitBtn) submitBtn.disabled = false;
+            if (footer) {
+                footer.style.display = 'flex';
+                footer.style.pointerEvents = 'auto';
+            }
             toggleBtn.innerText = 'CLOSE STORE';
         } else {
             storeOpenEl.style.display = 'none';
             storeClosedEl.style.display = 'block';
-            footer.style.display = 'none';
-            if (submitBtn) submitBtn.disabled = true;
+            if (footer) {
+                footer.style.display = 'none';
+                footer.style.pointerEvents = 'none';
+            }
             toggleBtn.innerText = 'OPEN STORE';
+            
+            // Clear any selections when closing store
+            selections = {};
+            document.getElementById('count').innerText = '0';
+            document.getElementById('total').innerText = '$0';
+            
+            // Reset all quantity displays
+            document.querySelectorAll('.qty-val').forEach(el => el.innerText = '0');
+            document.querySelectorAll('.item-row').forEach(row => row.classList.remove('has-qty'));
         }
+    }
     }
 </script>
 </body>
